@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>简易JS控制台</title>
+<style>
+#output { white-space: pre; }
+.error{
+  color:red;
+}
+.number{
+  color: blue;
+}
+</style>
+</head>
+<body>
+
+<h2>简易JS控制台</h2>
+<div>
+    <textarea id="codeInput" rows="10" cols="50"></textarea><br>
+    <button onclick="runCode()">运行</button>
+</div>
+<pre id="output"></pre>
+
+<script>
+
+
+let originalConsoleLog = console.log;
+
+// 临时重写console.log，以便同时输出到页面
+function captureLog(...args) {
+    originalConsoleLog.apply(console, args); // 保持原有控制台输出
+    const output = document.getElementById('output');
+    output.textContent += args.join(' ') + '\n'; // 将输出追加到页面的输出区域
+    alert(1)
+
+}
+
+function runCode() {
+    const codeInput = document.getElementById('codeInput');
+    const output = document.getElementById('output');
+    
+    try {
+        // 临时替换console.log
+        console.log = captureLog;
+        
+        // 使用eval执行用户输入的代码
+        const result = eval(codeInput.value);
+        
+        // 显示执行结果或表达式的求值结果
+        if (typeof result !== 'undefined') {
+            output.innerHTML = `<code class="number">${result}</code>`;
+        }
+        
+        // 执行完毕后，恢复原始的console.log
+        console.log = originalConsoleLog;
+    } catch (error) {
+        // 捕获并显示错误
+        output.innerHTML = `<code class="error">错误：${error.toString().replace(/\n/g, '<br>')}</code>`;
+    }
+}
+</script>
+</body>
+</html>
